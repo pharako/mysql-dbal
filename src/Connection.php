@@ -46,6 +46,28 @@ class Connection
     }
 
     /**
+     * Executes a ON DUPLICATE KEY UPDATE statement on a MySQL table.
+     *
+     * Table expression and columns are not escaped and are not safe for user-input.
+     *
+     * @param string $tableExpression  The expression of the table to update quoted or unquoted.
+     * @param array  $data       An associative array (multidimensional, if insertion/upate involves multiple records)
+     *                           containing column-value pairs.
+     * @param array  $types      Types of the merged $data and $identifier arrays in that order.
+     * @param array  $columnsToUpdate   Columns to be updated in case of duplicates.
+     *
+     * @return integer The number of affected rows.
+     */
+    public function upsert($tableExpression, array $data, array $types = array(), array $columnsToUpdate = array())
+    {
+        if (!$this->isArrayMultidimensional($data)) {
+            $data = array($data);
+        }
+
+        return $this->upsertMultiple($tableExpression, $data, $types, $columnsToUpdate);
+    }
+
+    /**
      * Inserts multiple table rows with specified data.
      *
      * Table expression and columns are not escaped and are not safe for user-input.
@@ -74,28 +96,6 @@ class Connection
         $finalTypes = $this->repeatTypeValues($data, $types);
 
         return $this->connection->executeUpdate($sql, $params, $finalTypes);
-    }
-
-    /**
-     * Executes a ON DUPLICATE KEY UPDATE statement on a MySQL table.
-     *
-     * Table expression and columns are not escaped and are not safe for user-input.
-     *
-     * @param string $tableExpression  The expression of the table to update quoted or unquoted.
-     * @param array  $data       An associative array (multidimensional, if insertion/upate involves multiple records)
-     *                           containing column-value pairs.
-     * @param array  $types      Types of the merged $data and $identifier arrays in that order.
-     * @param array  $columnsToUpdate   Columns to be updated in case of duplicates.
-     *
-     * @return integer The number of affected rows.
-     */
-    public function upsert($tableExpression, array $data, array $types = array(), array $columnsToUpdate = array())
-    {
-        if (!$this->isArrayMultidimensional($data)) {
-            $data = array($data);
-        }
-
-        return $this->upsertMultiple($tableExpression, $data, $types, $columnsToUpdate);
     }
 
     /**
