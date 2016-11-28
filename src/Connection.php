@@ -29,7 +29,7 @@ class Connection
      *
      * @param string $tableExpression The expression of the table to insert data into, quoted or unquoted.
      * @param array  $data      An associative array (multidimensional, if insertion involves multiple records)
-                                containing column-value pairs.
+     *                          containing column-value pairs.
      * @param array  $types     Types of the inserted data.
      *
      * @return integer The number of affected rows.
@@ -83,7 +83,7 @@ class Connection
      *
      * @param string $tableExpression  The expression of the table to update quoted or unquoted.
      * @param array  $data       An associative array (multidimensional, if insertion/upate involves multiple records)
-                                 containing column-value pairs.
+     *                           containing column-value pairs.
      * @param array  $types      Types of the merged $data and $identifier arrays in that order.
      * @param array  $columnsToUpdate   Columns to be updated in case of duplicates.
      *
