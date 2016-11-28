@@ -1,0 +1,28 @@
+{
+	"name": "pharako/mysql-dbal",
+    "description": "MySQL extensions for Doctrine DBAL",
+	"keywords": [
+		"doctrine", "dbal", "mysql", "upsert", "insert", "multiple"
+	],
+	"license": "MIT",
+	"authors": [{
+		"name": "Claudio Bizzotto"
+	}],
+    "require": {
+		"doctrine/dbal": "^2.5"
+	},
+	"require-dev": {
+        "php": "^5.4",
+        "codeception/codeception": "^2.2"
+	},
+	"autoload": {
+		"psr-4": {
+			"Pharako\\DBAL\\": "src/"
+		}
+	},
+	"extra": {
+		"branch-alias": {
+			"dev-master": "0.1-dev"
+		}
+	}
+}
