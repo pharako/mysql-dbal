@@ -3,25 +3,10 @@
 namespace Pharako\DBAL;
 
 use Doctrine\DBAL\Connection as DBALConnection;
+use Doctrine\DBAL\Driver\Connection as DriverConnection;
 
-class Connection
+class Connection extends DBALConnection implements DriverConnection
 {
-    protected $connection;
-
-    public function __construct(DBALConnection $connection)
-    {
-        if ('mysql' != strtolower($connection->getDriver()->getDatabasePlatform()->getName())) {
-            throw new \Doctrine\DBAL\DBALException('This is not a MySQL database.');
-        }
-
-        $this->connection = $connection;
-    }
-
-    public function __call($method, $arguments)
-    {
-        return call_user_func_array(array($this->connection, $method), $arguments);
-    }
-
     /**
      * Inserts one or more table rows with specified data.
      *
@@ -37,12 +22,12 @@ class Connection
     public function insert($tableExpression, array $data, array $types = array())
     {
         if (empty($data)) {
-            return $this->connection->executeUpdate('INSERT INTO ' . $tableExpression . ' ()' . ' VALUES ()');
+            return $this->executeUpdate('INSERT INTO ' . $tableExpression . ' ()' . ' VALUES ()');
         }
 
         return $this->isArrayMultidimensional($data) ?
                $this->insertMultiple($tableExpression, $data, $types) :
-               $this->connection->insert($tableExpression, $data, $types);
+               parent::insert($tableExpression, $data, $types);
     }
 
     /**
@@ -95,7 +80,7 @@ class Connection
         $types = is_string(key($types)) ? $this->extractTypeValues($first, $types) : $types;
         $finalTypes = $this->repeatTypeValues($data, $types);
 
-        return $this->connection->executeUpdate($sql, $params, $finalTypes);
+        return $this->executeUpdate($sql, $params, $finalTypes);
     }
 
     /**
@@ -135,7 +120,7 @@ class Connection
         $types = is_string(key($types)) ? $this->extractTypeValues($first, $types) : $types;
         $finalTypes = $this->repeatTypeValues($data, $types);
 
-        return $this->connection->executeUpdate($sql, $params, $finalTypes);
+        return $this->executeUpdate($sql, $params, $finalTypes);
     }
 
     /**
@@ -166,26 +151,5 @@ class Connection
         $count = count(array_keys($data));
         $repeated = array_fill(0, $count, $types);
         return call_user_func_array('array_merge', $repeated);
-    }
-
-    /**
-     * Extracts ordered type list from two associate key lists of data and types.
-     *
-     * @param array $data
-     * @param array $types
-     *
-     * @return array
-     */
-    private function extractTypeValues(array $data, array $types)
-    {
-        $typeValues = array();
-
-        foreach ($data as $k => $_) {
-            $typeValues[] = isset($types[$k])
-                ? $types[$k]
-                : \PDO::PARAM_STR;
-        }
-
-        return $typeValues;
     }
 }

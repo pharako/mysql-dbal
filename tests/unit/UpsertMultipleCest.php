@@ -1,19 +1,28 @@
 <?php
 
-use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Configuration;
+use Doctrine\Common\EventManager;
+use Doctrine\DBAL\Driver\PDOMySql\Driver;
 use Pharako\DBAL\Connection;
 
 class UpsertMultipleCest
 {
     public function _before(UnitTester $I)
     {
-        $this->dbal = new Connection(DriverManager::getConnection([
+        $params = [
             'dbname' => 'testdb',
             'host' => 'localhost',
             'username' => 'root',
             'password' => '',
             'driver' => 'pdo_mysql'
-        ]));
+        ];
+
+        $this->dbal = new Connection(
+            $params,
+            new Driver(),
+            new Configuration(),
+            new EventManager()
+        );
 
         $this
             ->dbal
