@@ -97,12 +97,32 @@ class UpsertSingleCest
      * @group upsert
      * @group single
      */
-    public function updateSingleTestWitTypes(UnitTester $I)
+    public function updateSingleTestWithTypes(UnitTester $I)
     {
         $hero = ['name' => 'Coxo', 'genociders_knocked_down' => 999];
 
         $this->dbal->upsert('heroes', $hero, ['string', 'integer']);
 
         $I->seeInDatabase('heroes', $hero);
+    }
+
+    /**
+     * @group upsert
+     * @group single
+     */
+    public function upsertSingleMultidimensionalTest(UnitTester $I)
+    {
+        $heroes = [
+            [
+                'name' => 'Sepe',
+                'pseudonym' => null,
+                'date_of_birth' => '1700-04-04',
+                'genociders_knocked_down' => 300
+            ]
+        ];
+
+        $this->dbal->upsert('heroes', $heroes[0]);
+
+        $I->seeInDatabase('heroes', $heroes[0]);
     }
 }

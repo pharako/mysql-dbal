@@ -65,4 +65,24 @@ class InsertSingleCest
 
         $I->seeInDatabase('heroes', $hero);
     }
+
+    /**
+     * @group insert
+     * @group single
+     */
+    public function insertSingleMultidimensionalTest(UnitTester $I)
+    {
+        $heroes = [
+            [
+                'name' => 'Sepe',
+                'pseudonym' => null,
+                'date_of_birth' => '1700-04-04',
+                'genociders_knocked_down' => 300
+            ]
+        ];
+
+        $this->dbal->insert('heroes', $heroes[0]);
+
+        $I->seeInDatabase('heroes', $heroes[0]);
+    }
 }
