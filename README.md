@@ -2,7 +2,10 @@
 
 MySQL extensions for [Doctrine DBAL](https://github.com/doctrine/dbal).
 
-`Pharako\DBAL\Connection` is just a wrapper for `Doctrine\DBAL\Connection`, which means all functionality you get from the latter is also present in the former, with a few add-ons (see below).
+`Pharako\DBAL\Connection` is an extension of `Doctrine\DBAL\Connection`, which means all functionality you get from the latter is also present in the former, with a few add-ons specific to MySQL:
+
+* multiple inserts
+* single and multiple upserts (update records if they exist, insert them otherwise)
 
 ## Installation
 
@@ -12,49 +15,53 @@ Install via Composer:
 $ composer require "pharako/mysql-dbal"
 ```
 
-## Configuration
+## Usage
 
-You can use the standard Doctrine initialization procedures to get an instance of the DBAL connection.
+### Instantiation and configuration
 
-You start by defining the database connection parameters:
+Most web frameworks will have some sort of *service injection* functionality to help you with configuration, but nothing stops you from doing it by hand.
+
+#### Manually
 
 ```PHP
+use Doctrine\Common\EventManager;
+use Doctrine\DBAL\Configuration;
+use Doctrine\DBAL\Driver\PDOMySql\Driver;
 use Pharako\DBAL\Connection;
 
-$connectionParams = [
-    'dbname' => 'mydb',
-    'user' => 'user',
-    'password' => 'secret',
+$params = [
+    'dbname' => 'my_db',
     'host' => 'localhost',
-    'driver' => 'pdo_mysql'
-];
-```
-
-Then you get a Doctrine DBAL connection:
-
-```PHP
-$doctrineDBAL = \Doctrine\DBAL\DriverManager::getConnection($connectionParams);
-```
-
-And wrap it with a DBAL connection:
-
-```PHP
-$dbal = new Connection($doctrineDBAL);
-```
-
-Or simply:
-
-```PHP
-$connectionParams = [
-    'dbname' => 'mydb',
-    'user' => 'user',
-    'password' => 'secret',
-    'host' => 'localhost',
+    'username' => 'username',
+    'password' => '***',
     'driver' => 'pdo_mysql'
 ];
 
-$dbal = new Connection(\Doctrine\DBAL\DriverManager::getConnection($connectionParams));
+$dbal = new Connection(
+    $params,
+    new Driver(),
+    new Configuration(),
+    new EventManager()
+);
 ```
+
+#### Symfony 2 and above
+
+Just specify the DBAL connection class under `wrapper_class` in `config.yml`. All the other configurations should remain the same:
+
+```YAML
+doctrine:
+    dbal:
+        dbname: %database_name%
+        host: %database_host%
+        port: %database_port%
+        user: %database_user%
+        password: %database_password%
+        driver: pdo_mysql
+        wrapper_class: 'Pharako\DBAL\Connection'
+```
+
+You can read [Doctrine DBAL Configuration](http://symfony.com/doc/current/reference/configuration/doctrine.html#doctrine-dbal-configuration) for more information on `wrapper_class` and other options.
 
 ## Extra functionality
 
@@ -77,7 +84,7 @@ $data = [
 $dbal->insert('my_table', $data);
 ```
 
-### Single or multiple upserts (update if present or insert if new)
+### Single or multiple upserts (update if present, insert if new)
 
 Assuming the `name` field is a unique key in the table structure, the first two records will have their `family_name` fields updated to `Rab` and `Zabb`, respectivelly, and the last one will be inserted:
 
