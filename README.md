@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/pharako/mysql-dbal.svg?branch=master)](https://travis-ci.org/pharako/mysql-dbal)
+
 # MySQL DBAL
 
 MySQL extensions for [Doctrine DBAL](https://github.com/doctrine/dbal).
