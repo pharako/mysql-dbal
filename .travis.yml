@@ -31,7 +31,7 @@ install:
 before_script:
   - if [[ "$DB" == "mysql" ]]; then mysql -e "CREATE DATABASE IF NOT EXISTS testdb;" -uroot; fi
 
-script: php vendor/bin/codecept run
+script: php vendor/bin/codecept run --debug
 
 cache:
   directories:
