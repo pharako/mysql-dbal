@@ -15,7 +15,7 @@ extensions:
 modules:
     config:
         Db:
-            dsn: 'mysql:host=localhost;dbname=testdb'
+            dsn: 'mysql:host=127.0.0.1;dbname=testdb'
             user: 'root'
             password: ''
             dump: 'tests/_data/dump.sql'

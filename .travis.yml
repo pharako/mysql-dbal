@@ -8,6 +8,9 @@ branches:
     - master
     - development
 
+services:
+  - mysql
+
 php:
   - 5.6
   - 7.1
