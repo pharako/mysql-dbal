@@ -32,7 +32,7 @@ use Pharako\DBAL\Connection;
 $params = [
     'dbname' => 'my_db',
     'host' => 'localhost',
-    'username' => 'username',
+    'user' => 'username',
     'password' => '***',
     'driver' => 'pdo_mysql'
 ];
