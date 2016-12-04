@@ -74,7 +74,7 @@ class InsertSingleCest
     {
         $heroes = [
             [
-                'name' => 'Sepe',
+                'name' => 'Taina',
                 'pseudonym' => null,
                 'date_of_birth' => '1700-04-04',
                 'genociders_knocked_down' => 300
