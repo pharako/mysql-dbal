@@ -17,9 +17,9 @@ class Connection extends DBALConnection implements DriverConnection
      *                          containing column-value pairs.
      * @param array  $types     Types of the inserted data.
      *
-     * @return integer The number of affected rows.
+     * @return int The number of affected rows.
      */
-    public function insert($tableExpression, array $data, array $types = array())
+    public function insert($tableExpression, array $data, array $types = [])
     {
         if (empty($data)) {
             return $this->executeUpdate('INSERT INTO ' . $tableExpression . ' ()' . ' VALUES ()');
@@ -41,12 +41,12 @@ class Connection extends DBALConnection implements DriverConnection
      * @param array  $types      Types of the merged $data and $identifier arrays in that order.
      * @param array  $columnsToUpdate   Columns to be updated in case of duplicates.
      *
-     * @return integer The number of affected rows.
+     * @return int The number of affected rows.
      */
-    public function upsert($tableExpression, array $data, array $types = array(), array $columnsToUpdate = array())
+    public function upsert($tableExpression, array $data, array $types = [], array $columnsToUpdate = [])
     {
         if (!$this->isArrayMultidimensional($data)) {
-            $data = array($data);
+            $data = [$data];
         }
 
         return $this->upsertMultiple($tableExpression, $data, $types, $columnsToUpdate);
@@ -61,12 +61,12 @@ class Connection extends DBALConnection implements DriverConnection
      * @param array  $data      A multidimensional array containing subarrays of column-value pairs.
      * @param array  $types     Types of the inserted data.
      *
-     * @return integer The number of affected rows.
+     * @return int The number of affected rows.
      */
-    protected function insertMultiple($tableExpression, array $data, array $types = array())
+    protected function insertMultiple($tableExpression, array $data, array $types = [])
     {
-        $values = array();
-        $params = array();
+        $values = [];
+        $params = [];
 
         foreach ($data as $index => $array) {
             $values[] = '(' . implode(', ', array_fill(0, count($array), '?')) . ')';
@@ -93,25 +93,24 @@ class Connection extends DBALConnection implements DriverConnection
      * @param array  $types      Types of the merged $data and $identifier arrays in that order.
      * @param array  $columnsToUpdate   Columns to be updated in case of duplicates.
      *
-     * @return integer The number of affected rows.
+     * @return int The number of affected rows.
      */
-    protected function upsertMultiple($tableExpression, array $data, array $types = array(), array $columnsToUpdate = array())
+    protected function upsertMultiple($tableExpression, array $data, array $types = [], array $columnsToUpdate = [])
     {
         $first = reset($data);
         $columnsToUpdate = !empty($columnsToUpdate) ? $columnsToUpdate : array_keys($first);
-        $updates = array();
+        $updates = [];
 
         foreach ($columnsToUpdate as $columnName) {
             $updates[] = $columnName . '=' . 'VALUES(' . $columnName . ')';
         }
 
-        $values = array();
-        $params = array();
+        $values = [];
+        $params = [];
 
         foreach ($data as $index => $array) {
             $values[] = '(' . implode(', ', array_fill(0, count($array), '?')) . ')';
             $params = array_merge($params, array_values($array));
-
         }
 
         $sql = 'INSERT INTO ' . $tableExpression . ' (' . implode(', ', array_keys($first)) . ') VALUES '
@@ -128,9 +127,10 @@ class Connection extends DBALConnection implements DriverConnection
      *
      * @param array  $data       An array (associative or not).
      *
-     * @return boolean True if the array is multidimensional, false otherwise.
+     * @return bool True if the array is multidimensional, false otherwise.
      */
-    private function isArrayMultidimensional(array $array) {
+    private function isArrayMultidimensional(array $array)
+    {
         return count($array) != count($array, COUNT_RECURSIVE);
     }
 
@@ -142,10 +142,10 @@ class Connection extends DBALConnection implements DriverConnection
      *
      * @return array
      */
-    private function repeatTypeValues(array $data, array $types = array())
+    private function repeatTypeValues(array $data, array $types = [])
     {
         if (empty($types)) {
-            return array();
+            return [];
         }
 
         $count = count(array_keys($data));
