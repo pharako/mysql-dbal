@@ -1,0 +1,36 @@
+language: php
+
+env:
+  - DB=mysql
+
+branches:
+  only:
+    - master
+    - development
+
+php:
+  - 5.2
+  - 5.5
+  - 7.1
+  - nightly
+  - hhvm
+
+allow_failures:
+  - php: nightly
+  - php: hhvm
+
+matrix:
+  fast_finish: true
+
+install:
+    - composer self-update
+    - composer install
+
+before_script:
+  - if [[ "$DB" == "mysql" ]]; then mysql -e "CREATE DATABASE IF NOT EXISTS `heroes`;" -uroot; fi
+
+script: php vendor/bin/codecept run
+
+cache:
+  directories:
+    - $HOME/.composer/cache
