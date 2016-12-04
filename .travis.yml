@@ -17,12 +17,11 @@ php:
   - nightly
   - hhvm
 
-allow_failures:
-  - php: nightly
-  - php: hhvm
-
 matrix:
   fast_finish: true
+  allow_failures:
+    - php: nightly
+    - php: hhvm
 
 install:
     - composer self-update
