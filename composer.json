@@ -9,6 +9,7 @@
 		"name": "Claudio Bizzotto"
 	}],
     "require": {
+        "php": ">=5.6",
 		"doctrine/dbal": "^2.5"
 	},
 	"require-dev": {
