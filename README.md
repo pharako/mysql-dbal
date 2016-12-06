@@ -9,12 +9,16 @@ MySQL extensions for [Doctrine DBAL](https://github.com/doctrine/dbal).
 * multiple inserts
 * single and multiple upserts (update records if they exist, insert them otherwise)
 
+## Requirements
+
+PHP 5.6 or above.
+
 ## Installation
 
 Install via Composer:
 
 ```SHELL
-$ composer require "pharako/mysql-dbal"
+$ composer require pharako/mysql-dbal
 ```
 
 ## Usage
