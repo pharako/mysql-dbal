@@ -10,11 +10,11 @@ class UpsertSingleCest
     public function _before(UnitTester $I)
     {
         $params = [
-            'dbname' => 'testdb',
-            'host' => '127.0.0.1',
-            'user' => 'root',
-            'password' => '',
-            'driver' => 'pdo_mysql'
+            'dbname' => getenv('DB_DATABASE') ?: 'testdb',
+            'host' => getenv('DB_HOST') ?: '127.0.0.1',
+            'user' => getenv('DB_USERNAME') ?: 'root',
+            'password' => getenv('DB_PASSWORD') ?: '',
+            'driver' => getenv('DB_DRIVER') ?: 'pdo_mysql'
         ];
 
         $this->dbal = new Connection(
