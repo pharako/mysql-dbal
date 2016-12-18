@@ -16,6 +16,8 @@ params:
     - env
 modules:
     config:
+        Sequence:
+            prefix: '_'
         Db:
             dsn: "mysql:host=%DB_HOST%;dbname=%DB_DATABASE%"
             user: "%DB_USERNAME%"
@@ -25,4 +27,5 @@ modules:
             cleanup: false
             reconnect: false
     enabled:
+        - Sequence
         - Db

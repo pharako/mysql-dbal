@@ -32,27 +32,45 @@ class UpsertMultipleCest
      * @group upsert
      * @group multiple
      */
-    public function insertMultipleTest(UnitTester $I)
+    public function insertMultiple(UnitTester $I)
     {
         $heroes = [
-            [
-                'name' => 'Sepé',
-                'pseudonym' => null,
-                'date_of_birth' => '1800-04-04',
-                'genociders_knocked_down' => 100
-            ],
-            [
-                'name' => 'Tupaq Amaru',
-                'pseudonym' => 'Túpac Amaru',
-                'date_of_birth' => '1700-04-04',
-                'genociders_knocked_down' => 1000
-            ]
+            ['name' => sq('Tupac Qatari_'), 'an_integer' => rand(0, 100)],
+            ['name' => sq('Moctezuma_'), 'an_integer' => rand(0, 100)],
+            ['name' => sq('Guaicaipuro_'), 'an_integer' => rand(0, 100)]
         ];
 
         $this->dbal->upsert('heroes', $heroes);
 
-        $I->seeInDatabase('heroes', $heroes[0]);
-        $I->seeInDatabase('heroes', $heroes[1]);
+        foreach ($heroes as $hero) {
+            $I->seeInDatabase('heroes', $hero);
+        }
+    }
+
+   /**
+     * Passing an array with Doctrine types guarantees parameter binding (note that 'an_integer' is being cast to a 
+     * float but still correctly inserted as an integer)
+     * @group upsert
+     * @group multiple
+     */
+    public function insertMultipleWithTypes(UnitTester $I)
+    {
+        $correctHeroes = [
+            ['name' => sq('Tupac Qatari_'), 'an_integer' => rand(0, 100)],
+            ['name' => sq('Moctezuma_'), 'an_integer' => rand(0, 100)],
+            ['name' => sq('Guaicaipuro_'), 'an_integer' => rand(0, 100)]
+        ];
+
+        $heroes = $correctHeroes;
+        foreach ($heroes as &$hero) {
+            $hero['an_integer'] = floatval((string)$hero['an_integer'] . '.00The');
+        }
+
+        $this->dbal->upsert('heroes', $heroes, ['string', 'integer']);
+
+        foreach ($correctHeroes as $correctHero) {
+            $I->seeInDatabase('heroes', $correctHero);
+        }
     }
 
     /**
@@ -60,84 +78,92 @@ class UpsertMultipleCest
      * @group upsert
      * @group multiple
      */
-    public function updateMultipleTest(UnitTester $I)
+    public function updateMultiple(UnitTester $I)
     {
         $heroes = [
-            [
-                'name' => 'Sepé',
-                'pseudonym' => 'José Tiaraj...',
-                'date_of_birth' => '1804-01-01',
-                'genociders_knocked_down' => 180
-            ],
-            [
-                'name' => 'Tupaq Amaru',
-                'pseudonym' => 'Túpac Amar...',
-                'date_of_birth' => '1700-01-01',
-                'genociders_knocked_down' => 1100
-            ],
-            [
-                'name' => 'Guaicaipuro',
-                'pseudonym' => null,
-                'date_of_birth' => '1900-01-01',
-                'genociders_knocked_down' => 50
-            ]
+            ['name' => 'Tupac Qatari', 'a_string' => sq('A string_'), 'an_integer' => rand(0, 100)],
+            ['name' => 'Moctezuma', 'a_string' => sq('A string_'), 'an_integer' => rand(0, 100)],
+            ['name' => 'Guaicaipuro', 'a_string' => sq('A string_'), 'an_integer' => rand(0, 100)]
         ];
 
         $this->dbal->upsert('heroes', $heroes);
 
-        $I->seeInDatabase('heroes', $heroes[0]);
-        $I->seeInDatabase('heroes', $heroes[1]);
-        $I->seeInDatabase('heroes', $heroes[2]);
+        foreach ($heroes as $hero) {
+            $I->seeInDatabase('heroes', $hero);
+        }
     }
 
     /**
-     * This will only update the `pseudonym` field, no matter what other fields are passed (note that
-     * `genociders_knocked_down` doesn't get updated)
      * @group upsert
      * @group multiple
      */
-    public function updateMultipleTestWithColumnsToUpdate(UnitTester $I)
+    public function updateMultipleWithTypes(UnitTester $I)
     {
         $correctHeroes = [
-            [
-                'name' => 'Sepé',
-                'pseudonym' => 'José Tiaraju',
-                'genociders_knocked_down' => 180
-            ],
-            [
-                'name' => 'Tupaq Amaru',
-                'pseudonym' => 'Túpac Amaru',
-                'genociders_knocked_down' => 1100
-            ]
+            ['name' => 'Tupac Qatari', 'an_integer' => rand(0, 100)],
+            ['name' => 'Moctezuma', 'an_integer' => rand(0, 100)],
+            ['name' => 'Guaicaipuro', 'an_integer' => rand(0, 100)]
         ];
 
         $heroes = $correctHeroes;
-        $heroes[0]['genociders_knocked_down'] = 0;
-        $heroes[1]['genociders_knocked_down'] = 0;
-
-        $this->dbal->upsert('heroes', $heroes, [], ['pseudonym']);
-
-        $I->seeInDatabase('heroes', $correctHeroes[0]);
-        $I->seeInDatabase('heroes', $correctHeroes[1]);
-    }
-
-    /**
-     * Passing an array with Doctrine types guarantees parameter binding
-     * @group upsert
-     * @group multiple
-     */
-    public function updateMultipleTestWitTypes(UnitTester $I)
-    {
-        $heroes = [
-            ['name' => 'Sepé', 'genociders_knocked_down' => 300],
-            ['name' => 'Tupaq Amaru', 'genociders_knocked_down' => 300],
-            ['name' => 'Guaicaipuro', 'genociders_knocked_down' => 300]
-        ];
+        foreach ($heroes as &$hero) {
+            $hero['an_integer'] = floatval((string)$hero['an_integer'] . '.00The');
+        }
 
         $this->dbal->upsert('heroes', $heroes, ['string', 'integer']);
 
-        $I->seeInDatabase('heroes', $heroes[0]);
-        $I->seeInDatabase('heroes', $heroes[1]);
-        $I->seeInDatabase('heroes', $heroes[2]);
+        foreach ($correctHeroes as $correctHero) {
+            $I->seeInDatabase('heroes', $correctHero);
+        }
+    }
+
+    /**
+     * This will only update the `a_string` field, no matter what other fields are passed (note that `an_integer` 
+     * doesn't get updated)
+     * @group upsert
+     * @group multiple
+     */
+    public function updateMultipleOnlySpecificColumns(UnitTester $I)
+    {
+        $correctHeroes = [
+            ['name' => 'Tupac Qatari', 'a_string' => sq('A string_')],
+            ['name' => 'Moctezuma', 'a_string' => sq('A string_')],
+            ['name' => 'Guaicaipuro', 'a_string' => sq('A string_')]
+        ];
+
+        $heroes = $correctHeroes;
+        foreach ($heroes as &$hero) {
+            $hero['an_integer'] = rand(0, 100);
+        }
+
+        $this->dbal->upsert('heroes', $heroes, [], ['a_string']);
+
+        foreach ($correctHeroes as $correctHero) {
+            $I->seeInDatabase('heroes', $correctHero);
+        }
+    }
+
+    /**
+     * @group upsert
+     * @group multiple
+     */
+    public function updateMultipleOnlySpecificColumnsWithTypes(UnitTester $I)
+    {
+        $correctHeroes = [
+            ['name' => 'Tupac Qatari', 'a_string' => sq('A string_')],
+            ['name' => 'Moctezuma', 'a_string' => sq('A string_')],
+            ['name' => 'Guaicaipuro', 'a_string' => sq('A string_')]
+        ];
+
+        $heroes = $correctHeroes;
+        foreach ($heroes as &$hero) {
+            $hero['an_integer'] = rand(0, 100);
+        }
+
+        $this->dbal->upsert('heroes', $heroes, ['string', 'string', 'integer'], ['a_string']);
+
+        foreach ($correctHeroes as $correctHero) {
+            $I->seeInDatabase('heroes', $correctHero);
+        }
     }
 }

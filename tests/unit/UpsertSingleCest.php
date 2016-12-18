@@ -32,18 +32,80 @@ class UpsertSingleCest
      * @group upsert
      * @group single
      */
-    public function insertSingleTest(UnitTester $I)
+    public function insertSingle(UnitTester $I)
     {
         $hero = [
-            'name' => 'Coxo',
-            'pseudonym' => null,
-            'date_of_birth' => '1800-04-04',
-            'genociders_knocked_down' => 100
+            'name' => 'Sepé',
+            'a_string' => sq('A string_'),
+            'an_integer' => rand(0, 100)
         ];
 
         $this->dbal->upsert('heroes', $hero);
 
         $I->seeInDatabase('heroes', $hero);
+    }
+
+    /**
+     * @group upsert
+     * @group single
+     */
+    public function insertSingleMultidimensional(UnitTester $I)
+    {
+        $heroes = [
+            [
+                'name' => sq('Sepé_'),
+                'a_string' => sq('A string_'),
+                'an_integer' => rand(0, 100)
+            ]
+        ];
+
+        $this->dbal->upsert('heroes', $heroes);
+
+        $I->seeInDatabase('heroes', $heroes[0]);
+    }
+
+    /**
+     * Passing an array with Doctrine types guarantees parameter binding (note that 'an_integer' is being cast to a 
+     * float but still correctly inserted as an integer)
+     * @group upsert
+     * @group single
+     */
+    public function insertSingleWithTypes(UnitTester $I)
+    {
+        $correctHero = [
+            'name' => sq('Sepé_'),
+            'a_string' => sq('A string_'),
+            'an_integer' => rand(0, 100)
+        ];
+
+        $hero = $correctHero;
+        $hero['an_integer'] = floatval((string)$hero['an_integer'] . '.00The');
+
+        $this->dbal->upsert('heroes', $hero, ['string', 'string', 'integer']);
+
+        $I->seeInDatabase('heroes', $correctHero);
+    }
+
+    /**
+     * @group upsert
+     * @group single
+     */
+    public function insertSingleWithTypesMultidimensional(UnitTester $I)
+    {
+        $correctHeroes = [
+            [
+                'name' => sq('Sepé_'),
+                'a_string' => sq('A string_'),
+                'an_integer' => rand(0, 100)
+            ]
+        ];
+
+        $heroes = $correctHeroes;
+        $heroes[0]['an_integer'] = floatval((string)$correctHeroes[0]['an_integer'] . '.00The');
+
+        $this->dbal->upsert('heroes', $heroes, ['string', 'string', 'integer']);
+
+        $I->seeInDatabase('heroes', $correctHeroes[0]);
     }
 
     /**
@@ -51,11 +113,12 @@ class UpsertSingleCest
      * @group upsert
      * @group single
      */
-    public function updateSingleTest(UnitTester $I)
+    public function updateSingle(UnitTester $I)
     {
         $hero = [
-            'name' => 'Coxo',
-            'genociders_knocked_down' => 999
+            'name' => 'Sepé',
+            'a_string' => sq('A string_'),
+            'an_integer' => rand(0, 100)
         ];
 
         $this->dbal->upsert('heroes', $hero);
@@ -64,59 +127,121 @@ class UpsertSingleCest
     }
 
     /**
-     * This will only update the `pseudonym` field, no matter what other fields are passed (note that
-     * `genociders_knocked_down` doesn't get updated)
      * @group upsert
      * @group single
      */
-    public function updateSingleTestWithColumnsToUpdate(UnitTester $I)
-    {
-        $correctHero = [
-            'name' => 'Coxo',
-            'pseudonym' => null,
-            'date_of_birth' => '1800-04-04',
-            'genociders_knocked_down' => 999
-        ];
-
-        $hero = $correctHero;
-        $heroes['genociders_knocked_down'] = 0;
-
-        $this->dbal->upsert('heroes', $hero, [], ['pseudonym']);
-
-        $I->seeInDatabase('heroes', $correctHero);
-    }
-
-    /**
-     * Passing an array with Doctrine types guarantees parameter binding
-     * @group upsert
-     * @group single
-     */
-    public function updateSingleTestWithTypes(UnitTester $I)
-    {
-        $hero = ['name' => 'Coxo', 'genociders_knocked_down' => 999];
-
-        $this->dbal->upsert('heroes', $hero, ['string', 'integer']);
-
-        $I->seeInDatabase('heroes', $hero);
-    }
-
-    /**
-     * @group upsert
-     * @group single
-     */
-    public function upsertSingleMultidimensionalTest(UnitTester $I)
+    public function updateSingleMultidimensional(UnitTester $I)
     {
         $heroes = [
             [
-                'name' => 'Sepe',
-                'pseudonym' => null,
-                'date_of_birth' => '1700-04-04',
-                'genociders_knocked_down' => 300
+                'name' => 'Sepé',
+                'a_string' => sq('A string_'),
+                'an_integer' => rand(0, 100)
             ]
         ];
 
         $this->dbal->upsert('heroes', $heroes[0]);
 
         $I->seeInDatabase('heroes', $heroes[0]);
+    }
+
+    /**
+     * This will only update the `a_string` field, no matter what other fields are passed (note that `an_integer` 
+     * doesn't get updated)
+     * @group upsert
+     * @group single
+     */
+    public function updateSingleOnlySpecificColumns(UnitTester $I)
+    {
+        $correctHero = [
+            'name' => 'Sepé',
+            'a_string' => sq('A string_')
+        ];
+
+        $hero = $correctHero;
+        $hero['an_integer'] = rand(0, 100);
+
+        $this->dbal->upsert('heroes', $hero, [], ['a_string']);
+
+        $I->seeInDatabase('heroes', $correctHero);
+    }
+
+    /**
+     * @group upsert
+     * @group single
+     */
+    public function updateSingleOnlySpecificColumnsMultidimensional(UnitTester $I)
+    {
+        $correctHeroes = [
+            [
+                'name' => 'Sepé',
+                'a_string' => sq('A string_')
+            ]
+        ];
+
+        $heroes = $correctHeroes;
+        $heroes[0]['an_integer'] = rand(0, 100);
+
+        $this->dbal->upsert('heroes', $heroes, [], ['a_string']);
+
+        $I->seeInDatabase('heroes', $correctHeroes[0]);
+    }
+
+    /**
+     * @group upsert
+     * @group single
+     */
+    public function updateSingleWithTypes(UnitTester $I)
+    {
+        $correctHero = ['name' => 'Sepé', 'an_integer' => rand(0, 100)];
+
+        $hero = $correctHero;
+        $hero['an_integer'] = floatval((string)$hero['an_integer'] . '.00The');
+
+        $this->dbal->upsert('heroes', $hero, ['string', 'integer']);
+
+        $I->seeInDatabase('heroes', $correctHero);
+    }
+
+    /**
+     * @group upsert
+     * @group single
+     */
+    public function updateSingleWithTypesMultidimensional(UnitTester $I)
+    {
+        $correctHeroes = [
+            [
+                'name' => 'Sepé',
+                'an_integer' => rand(0, 100)
+            ]
+        ];
+
+        $heroes = $correctHeroes;
+        $heroes[0]['an_integer'] = floatval((string)$correctHeroes[0]['an_integer'] . '.00The');
+
+        $this->dbal->upsert('heroes', $heroes, ['string', 'integer']);
+
+        $I->seeInDatabase('heroes', $correctHeroes[0]);
+    }
+
+    /**
+     * @group upsert
+     * @group single
+     */
+    public function updateSingleWithTypesMultidimensionalOnlySpecificColumns(UnitTester $I)
+    {
+        $correctHeroes = [
+            [
+                'name' => 'Sepé',
+                'a_string' => sq('A string_')
+            ]
+        ];
+
+        $heroes = $correctHeroes;
+        $heroes[0]['an_integer'] = rand(0, 100);
+
+        $this->dbal->upsert('heroes', $heroes, ['string', 'string', 'integer'], ['a_string']);
+
+        $I->seeInDatabase('heroes', $correctHeroes[0]);
     }
 }
