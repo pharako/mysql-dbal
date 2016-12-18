@@ -9,13 +9,7 @@ class UpsertMultipleCest
 {
     public function _before(UnitTester $I)
     {
-        $params = [
-            'dbname' => 'testdb',
-            'host' => '127.0.0.1',
-            'user' => 'root',
-            'password' => '',
-            'driver' => 'pdo_mysql'
-        ];
+        $params = $I->getDbConfig();
 
         $this->dbal = new Connection(
             $params,

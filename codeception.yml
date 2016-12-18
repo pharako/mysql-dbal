@@ -12,12 +12,14 @@ settings:
 extensions:
     enabled:
         - Codeception\Extension\RunFailed
+params:
+    - env
 modules:
     config:
         Db:
-            dsn: 'mysql:host=127.0.0.1;dbname=testdb'
-            user: 'root'
-            password: ''
+            dsn: "mysql:host=%DB_HOST%;dbname=%DB_DATABASE%"
+            user: "%DB_USERNAME%"
+            password: "%DB_PASSWORD%"
             dump: 'tests/_data/dump.sql'
             populate: true
             cleanup: false
