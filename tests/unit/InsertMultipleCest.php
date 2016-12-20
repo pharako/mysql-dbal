@@ -32,52 +32,44 @@ class InsertMultipleCest
      * @group insert
      * @group multiple
      */
-    public function insertMultipleTest(UnitTester $I)
+    public function insertMultiple(UnitTester $I)
     {
         $heroes = [
-            [
-                'name' => 'Sepé',
-                'pseudonym' => null,
-                'date_of_birth' => '1800-04-04',
-                'genociders_knocked_down' => 100
-            ],
-            [
-                'name' => 'Tupaq Amaru',
-                'pseudonym' => 'Túpac Amaru',
-                'date_of_birth' => '1700-04-04',
-                'genociders_knocked_down' => 1000
-            ]
+            ['name' => sq('Tupac Qatari_'), 'an_integer' => rand(0, 100)],
+            ['name' => sq('Moctezuma_'), 'an_integer' => rand(0, 100)],
+            ['name' => sq('Guaicaipuro_'), 'an_integer' => rand(0, 100)]
         ];
 
         $this->dbal->insert('heroes', $heroes);
 
-        $I->seeInDatabase('heroes', $heroes[0]);
-        $I->seeInDatabase('heroes', $heroes[1]);
+        foreach ($heroes as $hero) {
+            $I->seeInDatabase('heroes', $hero);
+        }
     }
 
     /**
-     * Passing an array with Doctrine types guarantees parameter binding (note that 'genociders_knocked_down' is being
-     * cast to a float but still correctly inserted as an integer)
+     * Passing an array with Doctrine types guarantees parameter binding (note that 'an_integer' is being cast to a 
+     * float but still correctly inserted as an integer)
      * @group insert
      * @group multiple
      */
-    public function insertMultipleWitTypesTest(UnitTester $I)
+    public function insertMultipleWithTypes(UnitTester $I)
     {
         $correctHeroes = [
-            ['name' => 'Tupac Qatari', 'genociders_knocked_down' => 300],
-            ['name' => 'Moctezuma', 'genociders_knocked_down' => 400],
-            ['name' => 'Guaicaipuro', 'genociders_knocked_down' => 999]
+            ['name' => sq('Tupac Qatari_'), 'an_integer' => rand(0, 100)],
+            ['name' => sq('Moctezuma_'), 'an_integer' => rand(0, 100)],
+            ['name' => sq('Guaicaipuro_'), 'an_integer' => rand(0, 100)]
         ];
 
         $heroes = $correctHeroes;
         foreach ($heroes as &$hero) {
-            $hero['genociders_knocked_down'] = floatval((string)$hero['genociders_knocked_down'] . '.00The');
+            $hero['an_integer'] = floatval((string)$hero['an_integer'] . '.00The');
         }
 
-        $this->dbal->upsert('heroes', $heroes, ['string', 'integer']);
+        $this->dbal->insert('heroes', $heroes, ['string', 'integer']);
 
-        $I->seeInDatabase('heroes', $correctHeroes[0]);
-        $I->seeInDatabase('heroes', $correctHeroes[1]);
-        $I->seeInDatabase('heroes', $correctHeroes[2]);
+        foreach ($correctHeroes as $correctHero) {
+            $I->seeInDatabase('heroes', $correctHero);
+        }
     }
 }

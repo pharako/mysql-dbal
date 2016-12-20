@@ -32,13 +32,12 @@ class InsertSingleCest
      * @group insert
      * @group single
      */
-    public function insertSingleTest(UnitTester $I)
+    public function insertSingle(UnitTester $I)
     {
         $hero = [
-            'name' => 'Coxo',
-            'pseudonym' => null,
-            'date_of_birth' => '1800-04-04',
-            'genociders_knocked_down' => 100
+            'name' => sq('Sepé_'),
+            'a_string' => sq('A string_'),
+            'an_integer' => rand(0, 100)
         ];
 
         $this->dbal->insert('heroes', $hero);
@@ -47,36 +46,65 @@ class InsertSingleCest
     }
 
     /**
-     * Passing an array with Doctrine types guarantees parameter binding
      * @group insert
      * @group single
      */
-    public function insertSingleWitTypesTest(UnitTester $I)
+    public function insertSingleMultidimensional(UnitTester $I)
     {
-        $hero = ['name' => 'Pindobusu', 'genociders_knocked_down' => 100];
+        $heroes = [
+            [
+                'name' => sq('Sepé_'),
+                'a_string' => sq('A string_'),
+                'an_integer' => rand(0, 100)
+            ]
+        ];
 
-        $this->dbal->insert('heroes', $hero, ['string', 'integer']);
+        $this->dbal->insert('heroes', $heroes);
 
-        $I->seeInDatabase('heroes', $hero);
+        $I->seeInDatabase('heroes', $heroes[0]);
+    }
+
+    /**
+     * Passing an array with Doctrine types guarantees parameter binding (note that 'an_integer' is being cast to a 
+     * float but still correctly inserted as an integer)
+     * @group insert
+     * @group single
+     */
+    public function insertSingleWithTypes(UnitTester $I)
+    {
+        $correctHero = [
+            'name' => sq('Sepé_'),
+            'a_string' => sq('A string_'),
+            'an_integer' => rand(0, 100)
+        ];
+
+        $hero = $correctHero;
+        $hero['an_integer'] = floatval((string)$correctHero['an_integer'] . '.00The');
+
+        $this->dbal->insert('heroes', $hero, ['string', 'string', 'integer']);
+
+        $I->seeInDatabase('heroes', $correctHero);
     }
 
     /**
      * @group insert
      * @group single
      */
-    public function insertSingleMultidimensionalTest(UnitTester $I)
+    public function insertSingleWithTypesMultidimensional(UnitTester $I)
     {
-        $heroes = [
+        $correctHeroes = [
             [
-                'name' => 'Taina',
-                'pseudonym' => null,
-                'date_of_birth' => '1700-04-04',
-                'genociders_knocked_down' => 300
+                'name' => sq('Sepé_'),
+                'a_string' => sq('A string_'),
+                'an_integer' => rand(0, 100)
             ]
         ];
 
-        $this->dbal->insert('heroes', $heroes[0]);
+        $heroes = $correctHeroes;
+        $heroes[0]['an_integer'] = floatval((string)$correctHeroes[0]['an_integer'] . '.00The');
 
-        $I->seeInDatabase('heroes', $heroes[0]);
+        $this->dbal->insert('heroes', $heroes, ['string', 'string', 'integer']);
+
+        $I->seeInDatabase('heroes', $correctHeroes[0]);
     }
 }
