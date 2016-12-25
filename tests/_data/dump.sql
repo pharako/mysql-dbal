@@ -1,12 +1,10 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
 CREATE TABLE IF NOT EXISTS `heroes` (
-    `hero_id` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(128) NOT NULL,
+    `name` VARCHAR(64) NOT NULL,
     `a_string` VARCHAR(128),
     `an_integer` SMALLINT,
-    PRIMARY KEY (`hero_id`),
-    UNIQUE KEY (`name`)
+    PRIMARY KEY (`name`)
 ) ENGINE=InnoDB CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 TRUNCATE TABLE `heroes`;
