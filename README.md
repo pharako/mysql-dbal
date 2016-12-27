@@ -93,7 +93,7 @@ $dbal->insert('my_table', $data);
 
 ## Single and multiple upserts (update if present, insert if new)
 
-Before using this functionality, make sure you read [*Caution with those upserts*](#caution-with-those-upserts) below.
+Before using this functionality, make sure you read [*Careful with those upserts*](#caution-with-those-upserts) below.
 
 Assuming the `name` field is a unique key in the table structure, the first two records will have their `family_name` fields updated to `Rab` and `Zabb`, respectivelly, and the last one will be inserted:
 
@@ -118,15 +118,11 @@ $dbal->upsert('my_table', $data);
 
 Again, this will hit the database only once.
 
-# Caution with those upserts
+# Careful with those upserts
 
-Upserts in MySQL are more involved than simple inserts and updates. Because they rely on the `ON DUPLICATE KEY UPDATE` clause, it is advised that upserts only be used on tables containing one unique key at most (naturally, if a table has not a single unique key defined, the upsert will work as a regular insert). Or, as the [official documentation](https://dev.mysql.com/doc/refman/5.7/en/insert-on-duplicate.html) puts it: *In general, you should try to avoid using an `ON DUPLICATE KEY UPDATE` clause on tables with multiple unique indexes* and *"[...] an `INSERT ... ON DUPLICATE KEY UPDATE` statement against a table having more than one unique or primary key is also marked as unsafe"*.
+Upserts in MySQL are more involved than simple inserts and updates. Because they rely on the `ON DUPLICATE KEY UPDATE` clause, it is *advised* (not *compulsory*) that upserts only be used on tables containing one unique key at most - naturally, if a table has not a single unique key defined, the upsert will work as a regular insert. Or, as the [official documentation](https://dev.mysql.com/doc/refman/5.7/en/insert-on-duplicate.html) puts it: *In general, you should try to avoid using an `ON DUPLICATE KEY UPDATE` clause on tables with multiple unique indexes* and *"[...] an `INSERT ... ON DUPLICATE KEY UPDATE` statement against a table having more than one unique or primary key is also marked as unsafe"*.
 
-Despite that, if you are feeling adventurous, you can definitely run upserts on tables containing multiple indexes so long as you are careful with the column(s) being updated when a duplicate is found - if one such column is itself a unique key, you will most probably get inconsistencies in your final data. So, keep in mind that the results from an upsert in such circumstances may be surprisingly different than you would expect.
+That doesn't mean upserts on tables containing multiple unique indexes will necessarily generate corrupted data. But, if you want to play it safe in those scenarios, try to **tighten your tests** and make sure you get the expected results when the upsert inserts your records as well as when it (potentially) updates them.
 
-By and large, upserts will function as expected when using a single index, no matter how complex that index is - for example, a table with a single multiple-column unique index should work just fine.
-
-That being said, if you want to play it safe, avoid using upserts on tables with multiple indexes and, when the upsert involves a single multiple-column unique index, try to tighten your tests to make sure you get the expected results when the upsert inserts your records as well as when it (potentially) updates them.
-
-Also, be aware of some limitations when using upserts on a master/slave installation (see the full story [here](http://bugs.mysql.com/bug.php?id=58637)).
+Also, be aware of some limitations of upserts when MySQL's replication features are being used (see the full story [here](http://bugs.mysql.com/bug.php?id=58637)).
 

@@ -5,7 +5,7 @@ use Doctrine\Common\EventManager;
 use Doctrine\DBAL\Driver\PDOMySql\Driver;
 use Pharako\DBAL\Connection;
 
-class UpsertMulticolumnIndexCest
+class UpsertMulticolumnUniqueIndexCest
 {
     public function _before(UnitTester $I)
     {
@@ -30,7 +30,7 @@ class UpsertMulticolumnIndexCest
 
     /**
      * @group upsert
-     * @group multi-column-index
+     * @group multicolumn-unique-index
      */
     public function insertMultiple(UnitTester $I)
     {
@@ -58,7 +58,7 @@ class UpsertMulticolumnIndexCest
 
     /**
      * @group upsert
-     * @group multi-column-index
+     * @group multicolumn-unique-index
      */
     public function updateMultiple(UnitTester $I)
     {

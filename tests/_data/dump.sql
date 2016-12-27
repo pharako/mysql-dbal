@@ -19,4 +19,14 @@ CREATE TABLE IF NOT EXISTS `heroes_multi_column_index` (
 
 TRUNCATE TABLE `heroes_multi_column_index`;
 
+CREATE TABLE IF NOT EXISTS `heroes_multiple_unique_indexes` (
+    `name` VARCHAR(64) NOT NULL,
+    `unique_thing` VARCHAR(64) NOT NULL,
+    `an_integer` SMALLINT,
+    PRIMARY KEY (`name`),
+    UNIQUE KEY (`unique_thing`)
+) ENGINE=InnoDB CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+
+TRUNCATE TABLE `heroes_multiple_unique_indexes`;
+
 SET FOREIGN_KEY_CHECKS = 1;
