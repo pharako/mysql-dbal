@@ -26,7 +26,7 @@ $ composer require pharako/mysql-dbal
 
 ## Instantiation and configuration
 
-Most web frameworks will have some sort of *service injection* functionality to help you with configuration, but nothing stops you from doing it by hand.
+Most PHP frameworks will have some sort of *service injection* functionality to help you with configuration, but nothing stops you from doing it by hand.
 
 ### Manually
 
@@ -72,6 +72,8 @@ You can read [Doctrine DBAL Configuration](http://symfony.com/doc/current/refere
 
 # Extra functionality
 
+Pharako's additional methods follow the structure of Doctrine's [data retrieval and manipulation](http://docs.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/data-retrieval-and-manipulation.html) functionality, including [binding types](http://docs.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/data-retrieval-and-manipulation.html#binding-types).
+
 ## Multiple inserts
 
 You can insert multiple records with one call - this will hit the database only once:
@@ -91,11 +93,17 @@ $data = [
 $dbal->insert('my_table', $data);
 ```
 
+Or, if you want to specify the types of the inserted data:
+
+```PHP
+$dbal->insert('my_table', $data, [\PDO::PARAM_STR, \PDO::PARAM_STR]);
+```
+
 ## Single and multiple upserts (update if present, insert if new)
 
 Before using this functionality, make sure you read [*Careful with those upserts*](#careful-with-those-upserts) below.
 
-Assuming the `name` field is a unique key in the table structure, the first two records will have their `family_name` fields updated to `Rab` and `Zabb`, respectivelly, and the last one will be inserted:
+Building on the previous example and assuming the `name` field is a unique key in the table structure, the first two records will have their `family_name` fields updated to `Rab` and `Zabb`, respectivelly, and the last one will be inserted:
 
 ```PHP
 $data = [
@@ -118,11 +126,31 @@ $dbal->upsert('my_table', $data);
 
 Again, this will hit the database only once.
 
+If you want your upsert to update only one column and leave all the others untouched, you can pass it an array specifying those columns:
+
+```PHP
+$data = [
+    'who' => 'Them',
+    'where' => 'There',
+    'when' => 'Sometime',
+    'why' => 'Because'
+];
+
+$dbal->upsert(
+    'another_table',
+    $data,
+    [\PDO::PARAM_STR, \PDO::PARAM_STR, \PDO::PARAM_STR, \PDO::PARAM_STR],
+    ['where', 'when']
+);
+```
+
+In this example, if the upsert results in an update, only the `where` and `when` fields will be updated. If the upsert results in an insert, all fields will be included.
+
 # Careful with those upserts
 
-Upserts in MySQL are more involved than simple inserts and updates. Because they rely on the `ON DUPLICATE KEY UPDATE` clause, it is *advised* (not *compulsory*) that upserts only be used on tables containing one unique key at most - naturally, if a table has not a single unique key defined, the upsert will work as a regular insert. Or, as the [official documentation](https://dev.mysql.com/doc/refman/5.7/en/insert-on-duplicate.html) puts it: *In general, you should try to avoid using an `ON DUPLICATE KEY UPDATE` clause on tables with multiple unique indexes* and *"[...] an `INSERT ... ON DUPLICATE KEY UPDATE` statement against a table having more than one unique or primary key is also marked as unsafe"*.
+Upserts in MySQL are more involved than simple inserts and updates. Because they rely on the `ON DUPLICATE KEY UPDATE` clause, it is *advised* (not *compulsory*) that upserts only be used on tables containing one unique key at most - naturally, if a table has not a single unique key defined, the upsert will work as a regular insert.
+
+Or, as the [official documentation](https://dev.mysql.com/doc/refman/5.7/en/insert-on-duplicate.html) puts it: "*In general, you should try to avoid using an `ON DUPLICATE KEY UPDATE` clause on tables with multiple unique indexes*" and *"[...] an `INSERT ... ON DUPLICATE KEY UPDATE` statement against a table having more than one unique or primary key is also marked as unsafe"*.
 
 That doesn't mean upserts on tables containing multiple unique indexes will necessarily generate corrupted data. But, if you want to play it safe in those scenarios, try to **tighten your tests** and make sure you get the expected results when the upsert inserts your records as well as when it (potentially) updates them.
-
-Also, be aware of some limitations of upserts when MySQL's replication features are being used (see the full story [here](http://bugs.mysql.com/bug.php?id=58637)).
 
