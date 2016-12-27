@@ -93,7 +93,7 @@ $dbal->insert('my_table', $data);
 
 ## Single and multiple upserts (update if present, insert if new)
 
-Before using this functionality, make sure you read [*Careful with those upserts*](#caution-with-those-upserts) below.
+Before using this functionality, make sure you read [*Careful with those upserts*](#careful-with-those-upserts) below.
 
 Assuming the `name` field is a unique key in the table structure, the first two records will have their `family_name` fields updated to `Rab` and `Zabb`, respectivelly, and the last one will be inserted:
 
