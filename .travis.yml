@@ -2,6 +2,7 @@ language: php
 
 env:
   - DB=mysql DB_HOST=mysql DB_DATABASE=testdb DB_USERNAME=root DB_PASSWORD=""
+  - DB=mariadb DB_HOST=mysql DB_DATABASE=testdb DB_USERNAME=root DB_PASSWORD=""
 
 branches:
   only:
@@ -10,6 +11,7 @@ branches:
 
 services:
   - mysql
+  - mariadb
 
 php:
   - 5.6
@@ -19,6 +21,7 @@ php:
   - hhvm
 
 addons:
+  mariadb: '10.3'
   hosts:
     - mysql
 
@@ -33,10 +36,11 @@ install:
     - composer install
 
 before_script:
-  - if [[ "$DB" == "mysql" ]]; then mysql -e "CREATE DATABASE IF NOT EXISTS testdb;" -uroot; fi
+  - if [ "$DB" == "mysql" ] || [ "$DB" == "mariadb" ]; then mysql -e "CREATE DATABASE IF NOT EXISTS testdb;" -uroot; fi
 
 script: php vendor/bin/codecept run --debug
 
 cache:
   directories:
     - $HOME/.composer/cache
+

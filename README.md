@@ -5,10 +5,15 @@ MySQL DBAL
 
 MySQL extensions for [Doctrine DBAL](https://github.com/doctrine/dbal).
 
-`Pharako\DBAL\Connection` is an extension of `Doctrine\DBAL\Connection`, which means all functionality you get from the latter is also present in the former, with a few add-ons specific to MySQL:
+`Pharako\DBAL\Connection` is an extension of `Doctrine\DBAL\Connection`, which means all functionality you get from the latter is also present in the former, with a few add-ons specific to databases compatible with MySQL:
 
 * multiple inserts
 * single and multiple upserts (update records if they exist, insert them otherwise)
+
+# Supported databases
+
+* MySQL
+* MariaDB
 
 # Requirements
 
