@@ -4,6 +4,7 @@ namespace Pharako\DBAL;
 
 use Doctrine\DBAL\Connection as DBALConnection;
 use Doctrine\DBAL\Driver\Connection as DriverConnection;
+use Doctrine\DBAL\ParameterType;
 
 class Connection extends DBALConnection implements DriverConnection
 {
