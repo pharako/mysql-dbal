@@ -83,6 +83,17 @@ class Connection extends DBALConnection implements DriverConnection
         return $this->executeUpdate($sql, $params, $finalTypes);
     }
 
+    private function extractTypeValues(array $columnList, array $types)
+    {
+        $typeValues = [];
+
+        foreach ($columnList as $columnIndex => $columnName) {
+            $typeValues[] = $types[$columnName] ?? ParameterType::STRING;
+        }
+
+        return $typeValues;
+    }
+
     /**
      * Executes a ON DUPLICATE KEY UPDATE statement on a MySQL table.
      *
