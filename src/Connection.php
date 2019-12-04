@@ -89,7 +89,7 @@ class Connection extends DBALConnection implements DriverConnection
         $typeValues = [];
 
         foreach ($columnList as $columnIndex => $columnName) {
-            $typeValues[] = $types[$columnName] ?? ParameterType::STRING;
+            $typeValues[] = $types[$columnIndex] ?? ParameterType::STRING;
         }
 
         return $typeValues;
