@@ -1,25 +1,24 @@
 [![Build Status](https://travis-ci.org/pharako/mysql-dbal.svg?branch=master)](https://travis-ci.org/pharako/mysql-dbal) [![Latest Stable Version](https://poser.pugx.org/pharako/mysql-dbal/v/stable)](https://packagist.org/packages/pharako/mysql-dbal) [![Total Downloads](https://poser.pugx.org/pharako/mysql-dbal/downloads)](https://packagist.org/packages/pharako/mysql-dbal) [![Latest Unstable Version](https://poser.pugx.org/pharako/mysql-dbal/v/unstable)](https://packagist.org/packages/pharako/mysql-dbal) [![License](https://poser.pugx.org/pharako/mysql-dbal/license)](https://packagist.org/packages/pharako/mysql-dbal)
 
-MySQL DBAL
-==========
+# MySQL DBAL
 
 MySQL extensions for [Doctrine DBAL](https://github.com/doctrine/dbal).
 
-`Pharako\DBAL\Connection` is an extension of `Doctrine\DBAL\Connection`, which means all functionality you get from the latter is also present in the former, with a few add-ons specific to databases compatible with MySQL:
+`Pharako\DBAL\Connection` is an extension of `Doctrine\DBAL\Connection`—all functionality you get from the latter is also contained in the former, with a few add-ons specific to databases compatible with MySQL:
 
 * multiple inserts
-* single and multiple upserts (update records if they exist, insert them otherwise)
+* single and multiple _upserts_ (update records if they exist, insert them otherwise)
 
-# Supported databases
+## Supported databases
 
 * MySQL
 * MariaDB
 
-# Requirements
+## Requirements
 
-PHP 5.6 or above.
+PHP 7.2 and above. See the [releases page](https://github.com/pharako/mysql-dbal/releases) for previous versions that still work with PHP < 7.2.
 
-# Installation
+## Installation
 
 Install via Composer:
 
@@ -27,13 +26,13 @@ Install via Composer:
 $ composer require pharako/mysql-dbal
 ```
 
-# Usage
+## Usage
 
-## Instantiation and configuration
+### Instantiation and configuration
 
-Most PHP frameworks will have some sort of *service injection* functionality to help you with configuration, but nothing stops you from doing it by hand.
+Most PHP frameworks will have some sort of service injection functionality to help you with configuration, but nothing stops you from doing it by hand.
 
-### Manually
+#### Manually
 
 ```PHP
 use Doctrine\Common\EventManager;
@@ -57,9 +56,9 @@ $dbal = new Connection(
 );
 ```
 
-### Symfony 2 and above
+#### Symfony 2 and above
 
-Just specify the DBAL connection class under `wrapper_class` in `config.yml`. All the other configurations should remain the same:
+Just specify the DBAL connection class under `wrapper_class` in `config.yml`. All other configurations should remain the same:
 
 ```YAML
 doctrine:
@@ -75,13 +74,13 @@ doctrine:
 
 You can read [Doctrine DBAL Configuration](http://symfony.com/doc/current/reference/configuration/doctrine.html#doctrine-dbal-configuration) for more information on `wrapper_class` and other options.
 
-# Extra functionality
+## Extra functionality
 
 Pharako's additional methods follow the structure of Doctrine's [data retrieval and manipulation](http://docs.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/data-retrieval-and-manipulation.html) functionality, including [binding types](http://docs.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/data-retrieval-and-manipulation.html#binding-types).
 
-## Multiple inserts
+### Multiple inserts
 
-You can insert multiple records with one call - this will hit the database only once:
+You can insert multiple records with one call—this will hit the database only once:
 
 ```PHP
 $data = [
@@ -98,17 +97,17 @@ $data = [
 $dbal->insert('my_table', $data);
 ```
 
-Or, if you want to specify the types of the inserted data:
+Or, if you want to specify the types of the data to be inserted:
 
 ```PHP
 $dbal->insert('my_table', $data, [\PDO::PARAM_STR, \PDO::PARAM_STR]);
 ```
 
-## Single and multiple upserts (update if present, insert if new)
+### Single and multiple upserts (update if present, insert if new)
 
-Before using this functionality, make sure you read [*Careful with those upserts*](#careful-with-those-upserts) below.
+Before using this functionality, make sure you read [_Careful with those upserts_](#careful-with-those-upserts) below.
 
-Building on the previous example and assuming the `name` field is a unique key in the table structure, the first two records will have their `family_name` fields updated to `Rab` and `Zabb`, respectivelly, and the last one will be inserted:
+Building on the previous example and assuming the `name` field is a unique key in the table structure, the first two records will have their `family_name` fields updated to `Rab` and `Zabb`, respectively, and the last one will be inserted:
 
 ```PHP
 $data = [
@@ -151,13 +150,18 @@ $dbal->upsert(
 
 In this example, if the upsert results in an update, only the `where` and `when` fields will be updated. If the upsert results in an insert, all fields will be included.
 
-### Careful with those upserts
+#### Careful with those upserts
 
-By and large, it is safe to execute upserts against tables of varied structures - those containing a single unique index, a multi-column unique index or even multiple unique indexes.
+By and large, it is safe to execute upserts against tables of varied structures—those containing a single unique index, a multi-column unique index or even multiple unique indexes.
 
-But, because upserts in MySQL are more involved than simple inserts and updates, you should **not** expect those methods to behave similarly in 100% of the cases (for example, `LAST_INSERT_ID()` in the context of an upsert may behave slightly differently than in that of an insert).
+However, because upserts in MySQL are more involved than simple inserts and updates, you should **not** expect those methods to behave similarly in 100% of the cases (for example, `LAST_INSERT_ID()` in the context of an upsert may behave slightly differently than in that of an insert).
 
-That's why the [official documentation](https://dev.mysql.com/doc/refman/5.7/en/insert-on-duplicate.html) says that "*In general, you should try to avoid using an `ON DUPLICATE KEY UPDATE` clause on tables with multiple unique indexes*" and *"[...] an `INSERT ... ON DUPLICATE KEY UPDATE` statement against a table having more than one unique or primary key is also marked as unsafe"*.
+That's why the [official documentation](https://dev.mysql.com/doc/refman/5.7/en/insert-on-duplicate.html) says that _"In general, you should try to avoid using an `ON DUPLICATE KEY UPDATE` clause on tables with multiple unique indexes"_ and _"[...] an `INSERT ... ON DUPLICATE KEY UPDATE` statement against a table having more than one unique or primary key is also marked as unsafe."_
 
-Despite that, upserts will work just as expected but in [edge case scenarios](http://bugs.mysql.com/bug.php?id=58637). If you want to play it extra safe, though, try to **tighten your tests** and make sure you get the expected results when the upsert inserts your records as well as when it (potentially) updates them.
+Despite that, upserts will work just as expected but in [edge case scenarios](http://bugs.mysql.com/bug.php?id=58637). If you want to play it extra safe, though, try to **tighten your tests** and make sure you get the expected results when the upsert updates your records as well as when it inserts them.
 
+## Development
+
+If you want to test this package from your workstation, checkout the [development environment](https://github.com/pharako/mysql-dbal-dev).
+
+Code contributions and bug reports are welcome. For pull requests, please use the `development` branch.
