@@ -158,7 +158,7 @@ However, because upserts in MySQL are more involved than simple inserts and upda
 
 That's why the [official documentation](https://dev.mysql.com/doc/refman/5.7/en/insert-on-duplicate.html) says that _"In general, you should try to avoid using an `ON DUPLICATE KEY UPDATE` clause on tables with multiple unique indexes"_ and _"[...] an `INSERT ... ON DUPLICATE KEY UPDATE` statement against a table having more than one unique or primary key is also marked as unsafe."_
 
-Despite that, upserts will work just as expected but in [edge case scenarios](http://bugs.mysql.com/bug.php?id=58637). If you want to play it extra safe, though, try to **tighten your tests** and make sure you get the expected results when the upsert inserts your records as well as when it (potentially) updates them.
+Despite that, upserts will work just as expected but in [edge case scenarios](http://bugs.mysql.com/bug.php?id=58637). If you want to play it extra safe, though, try to **tighten your tests** and make sure you get the expected results when the upsert updates your records as well as when it inserts them.
 
 ## Development
 
