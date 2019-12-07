@@ -74,6 +74,31 @@ class UpsertMultipleCest
     }
 
     /**
+     * Same as insertMultipleWithTypes(), but with a dictionary of types instead of a flat array.
+     * @group upsert
+     * @group multiple
+     */
+    public function insertMultipleWithTypesDictionary(UnitTester $I)
+    {
+        $correctHeroes = [
+            ['name' => sq('Tupac Qatari_'), 'an_integer' => rand(0, 100)],
+            ['name' => sq('Moctezuma_'), 'an_integer' => rand(0, 100)],
+            ['name' => sq('Guaicaipuro_'), 'an_integer' => rand(0, 100)]
+        ];
+
+        $heroes = $correctHeroes;
+        foreach ($heroes as &$hero) {
+            $hero['an_integer'] = floatval((string)$hero['an_integer'] . '.00The');
+        }
+
+        $this->dbal->upsert('heroes', $heroes, ['name' => 'string', 'an_integer' => 'integer']);
+
+        foreach ($correctHeroes as $correctHero) {
+            $I->seeInDatabase('heroes', $correctHero);
+        }
+    }
+
+    /**
      * All fields, except unique key (`name`), get updated
      * @group upsert
      * @group multiple
@@ -111,6 +136,31 @@ class UpsertMultipleCest
         }
 
         $this->dbal->upsert('heroes', $heroes, ['string', 'integer']);
+
+        foreach ($correctHeroes as $correctHero) {
+            $I->seeInDatabase('heroes', $correctHero);
+        }
+    }
+
+    /**
+     * Same as updateMultipleWithTypes(), but with a dictionary of types instead of a flat array.
+     * @group upsert
+     * @group multiple
+     */
+    public function updateMultipleWithTypesDictionary(UnitTester $I)
+    {
+        $correctHeroes = [
+            ['name' => 'Tupac Qatari', 'an_integer' => rand(0, 100)],
+            ['name' => 'Moctezuma', 'an_integer' => rand(0, 100)],
+            ['name' => 'Guaicaipuro', 'an_integer' => rand(0, 100)]
+        ];
+
+        $heroes = $correctHeroes;
+        foreach ($heroes as &$hero) {
+            $hero['an_integer'] = floatval((string)$hero['an_integer'] . '.00The');
+        }
+
+        $this->dbal->upsert('heroes', $heroes, ['name' => 'string', 'an_integer' => 'integer']);
 
         foreach ($correctHeroes as $correctHero) {
             $I->seeInDatabase('heroes', $correctHero);
@@ -161,6 +211,36 @@ class UpsertMultipleCest
         }
 
         $this->dbal->upsert('heroes', $heroes, ['string', 'string', 'integer'], ['a_string']);
+
+        foreach ($correctHeroes as $correctHero) {
+            $I->seeInDatabase('heroes', $correctHero);
+        }
+    }
+
+    /**
+     * Same as updateMultipleOnlySpecificColumnsWithTypes(), but with a dictionary of types instead of a flat array.
+     * @group upsert
+     * @group multiple
+     */
+    public function updateMultipleOnlySpecificColumnsWithTypesDictionary(UnitTester $I)
+    {
+        $correctHeroes = [
+            ['name' => 'Tupac Qatari', 'a_string' => sq('A string_')],
+            ['name' => 'Moctezuma', 'a_string' => sq('A string_')],
+            ['name' => 'Guaicaipuro', 'a_string' => sq('A string_')]
+        ];
+
+        $heroes = $correctHeroes;
+        foreach ($heroes as &$hero) {
+            $hero['an_integer'] = rand(0, 100);
+        }
+
+        $this->dbal->upsert(
+            'heroes',
+            $heroes,
+            ['name' => 'string', 'a_string' => 'string', 'an_integer' => 'integer'],
+            ['a_string']
+        );
 
         foreach ($correctHeroes as $correctHero) {
             $I->seeInDatabase('heroes', $correctHero);

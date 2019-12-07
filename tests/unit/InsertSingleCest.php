@@ -87,6 +87,27 @@ class InsertSingleCest
     }
 
     /**
+     * Same as insertSingleWithTypes(), but with a dictionary of types instead of a flat array.
+     * @group insert
+     * @group single
+     */
+    public function insertSingleWithTypesDictionary(UnitTester $I)
+    {
+        $correctHero = [
+            'name' => sq('Sepé_'),
+            'a_string' => sq('A string_'),
+            'an_integer' => rand(0, 100)
+        ];
+
+        $hero = $correctHero;
+        $hero['an_integer'] = floatval((string)$correctHero['an_integer'] . '.00The');
+
+        $this->dbal->insert('heroes', $hero, ['name' => 'string', 'a_string' => 'string', 'an_integer' => 'integer']);
+
+        $I->seeInDatabase('heroes', $correctHero);
+    }
+
+    /**
      * @group insert
      * @group single
      */
@@ -104,6 +125,29 @@ class InsertSingleCest
         $heroes[0]['an_integer'] = floatval((string)$correctHeroes[0]['an_integer'] . '.00The');
 
         $this->dbal->insert('heroes', $heroes, ['string', 'string', 'integer']);
+
+        $I->seeInDatabase('heroes', $correctHeroes[0]);
+    }
+
+    /**
+     * Same as insertSingleWithTypesMultidimensional(), but with a dictionary of types instead of a flat array.
+     * @group insert
+     * @group single
+     */
+    public function insertSingleWithTypesDictionaryMultidimensional(UnitTester $I)
+    {
+        $correctHeroes = [
+            [
+                'name' => sq('Sepé_'),
+                'a_string' => sq('A string_'),
+                'an_integer' => rand(0, 100)
+            ]
+        ];
+
+        $heroes = $correctHeroes;
+        $heroes[0]['an_integer'] = floatval((string)$correctHeroes[0]['an_integer'] . '.00The');
+
+        $this->dbal->insert('heroes', $heroes, ['name' => 'string', 'a_string' => 'string', 'an_integer' => 'integer']);
 
         $I->seeInDatabase('heroes', $correctHeroes[0]);
     }
