@@ -72,4 +72,29 @@ class InsertMultipleCest
             $I->seeInDatabase('heroes', $correctHero);
         }
     }
+
+    /**
+     * Same as insertMultipleWithTypes(), but with a dictionary of types instead of a flat array.
+     * @group insert
+     * @group multiple
+     */
+    public function insertMultipleWithTypesDictionary(UnitTester $I)
+    {
+        $correctHeroes = [
+            ['name' => sq('Tupac Qatari_'), 'an_integer' => rand(0, 100)],
+            ['name' => sq('Moctezuma_'), 'an_integer' => rand(0, 100)],
+            ['name' => sq('Guaicaipuro_'), 'an_integer' => rand(0, 100)]
+        ];
+
+        $heroes = $correctHeroes;
+        foreach ($heroes as &$hero) {
+            $hero['an_integer'] = floatval((string)$hero['an_integer'] . '.00The');
+        }
+
+        $this->dbal->insert('heroes', $heroes, ['name' => 'string', 'an_integer' => 'integer']);
+
+        foreach ($correctHeroes as $correctHero) {
+            $I->seeInDatabase('heroes', $correctHero);
+        }
+    }
 }

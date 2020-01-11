@@ -87,6 +87,27 @@ class UpsertSingleCest
     }
 
     /**
+     * Same as insertSingleWithTypes(), but with a dictionary of types instead of a flat array.
+     * @group upsert
+     * @group single
+     */
+    public function insertSingleWithTypesDictionary(UnitTester $I)
+    {
+        $correctHero = [
+            'name' => sq('Sepé_'),
+            'a_string' => sq('A string_'),
+            'an_integer' => rand(0, 100)
+        ];
+
+        $hero = $correctHero;
+        $hero['an_integer'] = floatval((string)$hero['an_integer'] . '.00The');
+
+        $this->dbal->upsert('heroes', $hero, ['name' => 'string', 'a_string' => 'string', 'an_integer' => 'integer']);
+
+        $I->seeInDatabase('heroes', $correctHero);
+    }
+
+    /**
      * @group upsert
      * @group single
      */
@@ -104,6 +125,33 @@ class UpsertSingleCest
         $heroes[0]['an_integer'] = floatval((string)$correctHeroes[0]['an_integer'] . '.00The');
 
         $this->dbal->upsert('heroes', $heroes, ['string', 'string', 'integer']);
+
+        $I->seeInDatabase('heroes', $correctHeroes[0]);
+    }
+
+    /**
+     * Same as insertSingleWithTypesMultidimensional(), but with a dictionary of types instead of a flat array.
+     * @group upsert
+     * @group single
+     */
+    public function insertSingleWithTypesDictionaryMultidimensional(UnitTester $I)
+    {
+        $correctHeroes = [
+            [
+                'name' => sq('Sepé_'),
+                'a_string' => sq('A string_'),
+                'an_integer' => rand(0, 100)
+            ]
+        ];
+
+        $heroes = $correctHeroes;
+        $heroes[0]['an_integer'] = floatval((string)$correctHeroes[0]['an_integer'] . '.00The');
+
+        $this->dbal->upsert(
+            'heroes',
+            $heroes,
+            ['name' => 'string', 'an_string' => 'string', 'an_integer' => 'integer']
+        );
 
         $I->seeInDatabase('heroes', $correctHeroes[0]);
     }
@@ -204,6 +252,23 @@ class UpsertSingleCest
     }
 
     /**
+     * Same as updateSingleWithTypes(), but with a dictionary of types instead of a flat array.
+     * @group upsert
+     * @group single
+     */
+    public function updateSingleWithTypesDictionary(UnitTester $I)
+    {
+        $correctHero = ['name' => 'Sepé', 'an_integer' => rand(0, 100)];
+
+        $hero = $correctHero;
+        $hero['an_integer'] = floatval((string)$hero['an_integer'] . '.00The');
+
+        $this->dbal->upsert('heroes', $hero, ['name' => 'string', 'an_integer' => 'integer']);
+
+        $I->seeInDatabase('heroes', $correctHero);
+    }
+
+    /**
      * @group upsert
      * @group single
      */
@@ -225,6 +290,28 @@ class UpsertSingleCest
     }
 
     /**
+     * Same as updateSingleWithTypesMultidimensional(), but with a dictionary of types instead of a flat array.
+     * @group upsert
+     * @group single
+     */
+    public function updateSingleWithTypesDictionaryMultidimensional(UnitTester $I)
+    {
+        $correctHeroes = [
+            [
+                'name' => 'Sepé',
+                'an_integer' => rand(0, 100)
+            ]
+        ];
+
+        $heroes = $correctHeroes;
+        $heroes[0]['an_integer'] = floatval((string)$correctHeroes[0]['an_integer'] . '.00The');
+
+        $this->dbal->upsert('heroes', $heroes, ['name' => 'string', 'an_integer' => 'integer']);
+
+        $I->seeInDatabase('heroes', $correctHeroes[0]);
+    }
+
+    /**
      * @group upsert
      * @group single
      */
@@ -241,6 +328,34 @@ class UpsertSingleCest
         $heroes[0]['an_integer'] = rand(0, 100);
 
         $this->dbal->upsert('heroes', $heroes, ['string', 'string', 'integer'], ['a_string']);
+
+        $I->seeInDatabase('heroes', $correctHeroes[0]);
+    }
+
+    /**
+     * Same as updateSingleWithTypesMultidimensionalOnlySpecificColumns(),
+     * but with a dictionary of types instead of a flat array.
+     * @group upsert
+     * @group single
+     */
+    public function updateSingleWithTypesDictionaryMultidimensionalOnlySpecificColumns(UnitTester $I)
+    {
+        $correctHeroes = [
+            [
+                'name' => 'Sepé',
+                'a_string' => sq('A string_')
+            ]
+        ];
+
+        $heroes = $correctHeroes;
+        $heroes[0]['an_integer'] = rand(0, 100);
+
+        $this->dbal->upsert(
+            'heroes',
+            $heroes,
+            ['name' => 'string', 'a_string' => 'string', 'an_integer' => 'integer'],
+            ['a_string']
+        );
 
         $I->seeInDatabase('heroes', $correctHeroes[0]);
     }
