@@ -71,7 +71,7 @@ class Connection extends DBALConnection implements DriverConnection
 
         foreach ($data as $index => $array) {
             $values[] = '(' . implode(', ', array_fill(0, count($array), '?')) . ')';
-            $params[] =  array_values($array);
+            $params[] = array_values($array);
         }
         $params = array_merge(...$params);
 
@@ -112,8 +112,9 @@ class Connection extends DBALConnection implements DriverConnection
 
         foreach ($data as $index => $array) {
             $values[] = '(' . implode(', ', array_fill(0, count($array), '?')) . ')';
-            $params = array_merge($params, array_values($array));
+            $params[] = array_values($array);
         }
+        $params = array_merge(...$params);
 
         $sql = 'INSERT INTO ' . $tableExpression . ' (' . implode(', ', array_keys($first)) . ') VALUES '
                . implode(', ', $values) . ' ON DUPLICATE KEY UPDATE ' . implode(', ', $updates);
