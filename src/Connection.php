@@ -170,6 +170,7 @@ class Connection extends DBALConnection implements DriverConnection
 
         $count = count(array_keys($data));
         $repeated = array_fill(0, $count, $types);
-        return call_user_func_array('array_merge', $repeated);
+
+        return array_merge(...$repeated);
     }
 }
