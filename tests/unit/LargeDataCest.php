@@ -36,7 +36,7 @@ class LargeDataCest
     public function largeDataInsert(UnitTester $I)
     {
         $heroes = [];
-        $n = 20000;
+        $n = 5000;
         for ($i = 0; $i < $n; $i++) {
             $heroes[] = [
                 'name' => sq("Tupac Qatari $i - "),
@@ -60,7 +60,7 @@ class LargeDataCest
     public function largeDataUpsert(UnitTester $I)
     {
         $heroes = [];
-        $n = 20000;
+        $n = 5000;
         for ($i = 0; $i < $n; $i++) {
             $heroes[] = [
                 'name' => sq("Tupac Qatari $i - "),
