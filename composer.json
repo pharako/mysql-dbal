@@ -9,11 +9,14 @@
         "name": "Claudio Bizzotto"
     }],
     "require": {
-        "php": ">=7.2",
-        "doctrine/dbal": "^2.10"
+        "php": "^8.0|^8.1",
+        "doctrine/dbal": "^3"
     },
     "require-dev": {
-        "codeception/codeception": "^3.1"
+        "codeception/codeception": "^4.1",
+        "codeception/module-asserts": "*",
+        "codeception/module-sequence": "*",
+        "codeception/module-db": "*"
     },
     "autoload": {
         "psr-4": {

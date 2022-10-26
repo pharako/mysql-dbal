@@ -6,7 +6,7 @@ use Doctrine\DBAL\Connection as DBALConnection;
 use Doctrine\DBAL\Driver\Connection as DriverConnection;
 use Doctrine\DBAL\ParameterType;
 
-class Connection extends DBALConnection implements DriverConnection
+class Connection extends DBALConnection
 {
     /**
      * Inserts one or more table rows with specified data.
