@@ -2,7 +2,7 @@
 
 use Doctrine\DBAL\Configuration;
 use Doctrine\Common\EventManager;
-use Doctrine\DBAL\Driver\PDOMySql\Driver;
+use Doctrine\DBAL\Driver\PDO\MySql\Driver;
 use Pharako\DBAL\Connection;
 
 class UpsertMultipleCest
@@ -17,11 +17,6 @@ class UpsertMultipleCest
             new Configuration(),
             new EventManager()
         );
-
-        $this
-            ->dbal
-            ->getConfiguration()
-            ->setSQLLogger(new \Doctrine\DBAL\Logging\EchoSQLLogger());
     }
 
     public function _after(UnitTester $I)

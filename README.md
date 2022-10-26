@@ -16,7 +16,7 @@ MySQL extensions for [Doctrine DBAL](https://github.com/doctrine/dbal).
 
 ## Requirements
 
-PHP 7.2 and above. See the [releases page](https://github.com/pharako/mysql-dbal/releases) for previous versions that still work with PHP < 7.2.
+PHP 8.0 and above. See the [releases page](https://github.com/pharako/mysql-dbal/releases) for previous versions that still work with PHP < 8.0.
 
 ## Installation
 
