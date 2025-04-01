@@ -3,7 +3,6 @@
 namespace Pharako\DBAL;
 
 use Doctrine\DBAL\Connection as DBALConnection;
-use Doctrine\DBAL\Driver\Connection as DriverConnection;
 use Doctrine\DBAL\ParameterType;
 
 class Connection extends DBALConnection
@@ -13,22 +12,22 @@ class Connection extends DBALConnection
      *
      * Table expression and columns are not escaped and are not safe for user-input.
      *
-     * @param string $tableExpression   The expression of the table to insert data into, quoted or unquoted.
+     * @param string $table   The expression of the table to insert data into, quoted or unquoted.
      * @param array  $data              An associative array (multidimensional, if insertion involves multiple records)
      * containing column-value pairs.
      * @param array  $types             Types of the inserted data.
      *
      * @return int The number of affected rows.
      */
-    public function insert($tableExpression, array $data, array $types = [])
+    public function insert($table, array $data, array $types = [])
     {
         if (empty($data)) {
-            return $this->executeUpdate('INSERT INTO ' . $tableExpression . ' ()' . ' VALUES ()');
+            return $this->executeUpdate('INSERT INTO ' . $table . ' ()' . ' VALUES ()');
         }
 
         return $this->isArrayMultidimensional($data) ?
-               $this->insertMultiple($tableExpression, $data, $types) :
-               parent::insert($tableExpression, $data, $types);
+               $this->insertMultiple($table, $data, $types) :
+               parent::insert($table, $data, $types);
     }
 
     /**

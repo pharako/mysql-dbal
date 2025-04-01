@@ -2,7 +2,7 @@
 
 use Doctrine\DBAL\Configuration;
 use Doctrine\Common\EventManager;
-use Doctrine\DBAL\Driver\PDO\MySql\Driver;
+use Doctrine\DBAL\Driver\PDO\MySQL\Driver;
 use Pharako\DBAL\Connection;
 
 class LargeDataCest

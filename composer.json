@@ -10,6 +10,8 @@
     }],
     "require": {
         "php": "^8.0|^8.1",
+        "ext-pdo": "*",
+        "ext-pdo_mysql": "*",
         "doctrine/dbal": "^3"
     },
     "require-dev": {
@@ -21,11 +23,6 @@
     "autoload": {
         "psr-4": {
             "Pharako\\DBAL\\": "src/"
-        }
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "0.2-dev"
         }
     }
 }
